@@ -1,0 +1,661 @@
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Озёра Саха — путешествие по Якутии</title>
+<style>
+:root {
+  --bg: #eef8fa;
+  --blue: #07566b;
+  --dark: #092b3a;
+  --cyan: #9be8ed;
+  --gold: #ffd166;
+  --white: #fff;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: var(--bg);
+  color: #153541;
+  line-height: 1.6;
+}
+header {
+  background: linear-gradient(135deg,#092b3a,#087e91);
+  color: white;
+  padding: 24px 6% 70px;
+}
+nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+nav a {
+  color: white;
+  text-decoration: none;
+  margin: 5px;
+  font-weight: bold;
+}
+.hero {
+  max-width: 900px;
+  padding-top: 65px;
+}
+.hero small {
+  color: var(--gold);
+  letter-spacing: 3px;
+  font-weight: bold;
+}
+h1 {
+  font-size: clamp(38px,7vw,76px);
+  line-height: 1.05;
+  margin: 18px 0;
+}
+.hero p { font-size: 21px; max-width: 700px; }
+.btn {
+  display: inline-block;
+  border: 0;
+  border-radius: 12px;
+  padding: 15px 22px;
+  margin: 8px 5px 0 0;
+  background: var(--gold);
+  color: var(--dark);
+  font-weight: bold;
+  font-size: 17px;
+  text-decoration: none;
+  cursor: pointer;
+}
+main {
+  max-width: 1200px;
+  margin: auto;
+  padding: 30px 20px 60px;
+}
+section { margin: 45px 0; scroll-margin-top: 20px; }
+h2 {
+  font-size: clamp(28px,4vw,43px);
+  color: var(--dark);
+  line-height: 1.2;
+}
+.subtitle { color: #53717a; }
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3,minmax(0,1fr));
+  gap: 20px;
+}
+.card {
+  background: white;
+  padding: 24px;
+  border-radius: 20px;
+  box-shadow: 0 8px 25px #123b4a12;
+}
+.card h3 { color: var(--blue); }
+.icon { font-size: 38px; }
+.gallery {
+  display: grid;
+  grid-template-columns: repeat(3,minmax(0,1fr));
+  gap: 16px;
+}
+.photo {
+  border: 0;
+  padding: 0;
+  position: relative;
+  overflow: hidden;
+  border-radius: 18px;
+  aspect-ratio: 4 / 3;
+  cursor: pointer;
+  background: #cce5e7;
+}
+.photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform .3s;
+}
+.photo:hover img { transform: scale(1.05); }
+.photo span {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 28px 12px 12px;
+  background: linear-gradient(transparent,#001d29dd);
+  color: white;
+  font-size: 17px;
+  font-weight: bold;
+  text-align: left;
+}
+.notice {
+  background: #fff6d9;
+  padding: 20px;
+  border-left: 5px solid #e6ad32;
+  border-radius: 10px;
+}
+.quiz {
+  background: linear-gradient(135deg,#092b3a,#126782);
+  color: white;
+  padding: clamp(20px,4vw,40px);
+  border-radius: 24px;
+}
+.quiz h2 { color: white; }
+.progress {
+  height: 10px;
+  background: #ffffff30;
+  border-radius: 10px;
+  overflow: hidden;
+  margin: 20px 0;
+}
+#bar {
+  height: 100%;
+  width: 0;
+  background: var(--gold);
+  transition: width .25s;
+}
+#question {
+  font-size: clamp(22px,3vw,31px);
+  font-weight: bold;
+  margin: 25px 0;
+}
+.answers {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.answer {
+  min-height: 70px;
+  text-align: left;
+  padding: 16px;
+  color: white;
+  background: #ffffff12;
+  border: 2px solid #ffffff60;
+  border-radius: 14px;
+  font-size: 17px;
+  cursor: pointer;
+}
+.answer:hover:not(:disabled) { background: #ffffff30; }
+.answer:disabled { cursor: default; }
+.answer.correct { background: #126b51; border-color: #78f0b0; }
+.answer.wrong { background: #8b343b; border-color: #ffaaaa; }
+#feedback { min-height: 55px; margin-top: 18px; }
+#result { text-align: center; }
+#resultScore { font-size: 65px; color: var(--gold); font-weight: bold; }
+.hidden { display: none !important; }
+footer {
+  text-align: center;
+  padding: 35px 20px;
+  background: var(--dark);
+  color: white;
+}
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 10;
+  inset: 0;
+  background: #00131eef;
+  align-items: center;
+  justify-content: center;
+  padding: 18px;
+}
+.modal.open { display: flex; }
+.modal-inner {
+  width: min(1000px,100%);
+  text-align: center;
+  color: white;
+}
+.modal img {
+  max-width: 100%;
+  max-height: 70vh;
+  object-fit: contain;
+  border-radius: 12px;
+}
+.modal button {
+  padding: 12px 18px;
+  margin: 8px;
+  border: 1px solid white;
+  border-radius: 10px;
+  background: #ffffff20;
+  color: white;
+  cursor: pointer;
+  font-size: 17px;
+}
+@media(max-width:750px) {
+  .grid,.gallery { grid-template-columns: repeat(2,minmax(0,1fr)); }
+}
+@media(max-width:520px) {
+  .grid,.gallery,.answers { grid-template-columns: 1fr; }
+  header { padding-bottom: 40px; }
+  .hero { padding-top: 40px; }
+  .photo { aspect-ratio: 5 / 3; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <nav>
+    <strong>❄ САХА · ЯКУТИЯ</strong>
+    <div>
+      <a href="#about">О проекте</a>
+      <a href="#lakes">Озёра</a>
+      <a href="#gallery">Фото</a>
+      <a href="#game">Игра</a>
+    </div>
+  </nav>
+  <div class="hero">
+    <small>ПРИРОДА СЕВЕРА</small>
+    <h1>Озёра Саха —<br>мир воды и вечной мерзлоты</h1>
+    <p>
+      Открой удивительный мир Якутии: суровые северные
+      пейзажи, загадочные озёра, уникальная природа
+      и интересные географические открытия.
+    </p>
+    <a class="btn" href="#lakes">Исследовать озёра ↓</a>
+    <a class="btn" href="#game">Начать викторину →</a>
+  </div>
+</header>
+
+<main>
+<section id="about">
+  <h2>Знакомство с озёрами Якутии</h2>
+  <p class="subtitle">
+    Республика Саха — огромный регион на северо-востоке
+    Сибири с суровым климатом, многолетней мерзлотой
+    и многочисленными озёрами.
+  </p>
+  <div class="grid">
+    <article class="card">
+      <div class="icon">❄️</div>
+      <h3>Многолетняя мерзлота</h3>
+      <p>
+        Во многих районах Якутии грунт остаётся
+        мёрзлым на протяжении многих лет. Мерзлота
+        влияет на движение воды и образование водоёмов.
+      </p>
+    </article>
+    <article class="card">
+      <div class="icon">🦆</div>
+      <h3>Жизнь у воды</h3>
+      <p>
+        Озёра обеспечивают среду обитания для рыб,
+        водных беспозвоночных и перелётных птиц.
+        Берега особенно важны в период гнездования.
+      </p>
+    </article>
+    <article class="card">
+      <div class="icon">🌍</div>
+      <h3>Природное наследие</h3>
+      <p>
+        Озёра помогают учёным изучать климат,
+        экосистемы и изменения северных ландшафтов.
+        Их необходимо беречь от загрязнения.
+      </p>
+    </article>
+  </div>
+</section>
+
+<section id="lakes">
+  <h2>Известные озёра Саха</h2>
+  <p class="subtitle">
+    У каждого водоёма свой характер и своя история.
+  </p>
+  <div class="grid">
+    <article class="card">
+      <div class="icon">🏔️</div>
+      <h3>Лабынкыр</h3>
+      <p>
+        Озеро в восточной части Якутии, известное
+        удалённостью, суровым климатом и местными
+        легендами. Оно привлекает внимание
+        путешественников и исследователей.
+      </p>
+    </article>
+    <article class="card">
+      <div class="icon">🌊</div>
+      <h3>Моготоево</h3>
+      <p>
+        Озеро в арктической части Якутии, на побережье
+        моря Лаптевых. Оно связано с суровыми
+        природными условиями северного побережья.
+      </p>
+    </article>
+    <article class="card">
+      <div class="icon">🌿</div>
+      <h3>Озёра тундры</h3>
+      <p>
+        На равнинах и в тундре встречаются многочисленные
+        небольшие водоёмы. Они важны для птиц,
+        растений и других обитателей севера.
+      </p>
+    </article>
+  </div>
+  <div class="notice">
+    <strong>Береги природу!</strong>
+    Не оставляй мусор на берегу, не тревожь животных
+    и никогда не выходи на лёд без взрослых и
+    подтверждённой оценки безопасности.
+  </div>
+</section>
+
+<section id="gallery">
+  <h2>Фотогалерея северной природы</h2>
+  <p class="subtitle">
+    Нажми на фотографию, чтобы увеличить её.
+    Переключай изображения кнопками — удобно для
+    сенсорной электронной доски.
+  </p>
+  <div class="gallery" id="photos">
+    <button class="photo" data-title="Северное озеро">
+      <img loading="lazy"
+        src="https://images.unsplash.com/photo-1470770841072-f978cf4d019e?auto=format&fit=crop&w=1000&q=85"
+        alt="Озеро среди гор и лесов">
+      <span>Северное озеро</span>
+    </button>
+    <button class="photo" data-title="Горный пейзаж">
+      <img loading="lazy"
+        src="https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1000&q=85"
+        alt="Горные вершины">
+      <span>Горный пейзаж</span>
+    </button>
+    <button class="photo" data-title="Вода и горы">
+      <img loading="lazy"
+        src="https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=1000&q=85"
+        alt="Прозрачное озеро у гор">
+      <span>Вода и горы</span>
+    </button>
+    <button class="photo" data-title="Лесное озеро">
+      <img loading="lazy"
+        src="https://images.unsplash.com/photo-1439066615861-d1af74d74000?auto=format&fit=crop&w=1000&q=85"
+        alt="Лес и озеро">
+      <span>Лесное озеро</span>
+    </button>
+    <button class="photo" data-title="Величие гор">
+      <img loading="lazy"
+        src="https://images.unsplash.com/photo-1464278533981-50106e6176b1?auto=format&fit=crop&w=1000&q=85"
+        alt="Высокие горы">
+      <span>Величие гор</span>
+    </button>
+    <button class="photo" data-title="Тихая вода">
+      <img loading="lazy"
+        src="https://images.unsplash.com/photo-1441974231531-c6227db76b6e?auto=format&fit=crop&w=1000&q=85"
+        alt="Северный лес">
+      <span>Северный лес</span>
+    </button>
+  </div>
+  <p class="subtitle">
+    Примечание: фотографии иллюстрируют северные
+    и горные пейзажи; они не обязательно сделаны
+    именно в Якутии.
+  </p>
+</section>
+
+<section id="game">
+  <h2>Мини-игра: проверь свои знания!</h2>
+  <p class="subtitle">
+    15 вопросов о географии, природе и озёрах Саха.
+    За каждый правильный ответ — 1 балл.
+  </p>
+  <div class="quiz">
+    <div id="gameArea">
+      <div id="counter">Вопрос 1 из 15 · Баллы: 0</div>
+      <div class="progress"><div id="bar"></div></div>
+      <div id="question"></div>
+      <div class="answers" id="answers"></div>
+      <div id="feedback" aria-live="polite"></div>
+      <button class="btn" id="next" disabled>Следующий вопрос →</button>
+    </div>
+    <div id="result" class="hidden">
+      <div id="resultScore"></div>
+      <h2 id="resultTitle"></h2>
+      <p id="resultText"></p>
+      <button class="btn" id="restart">Играть ещё раз ↻</button>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer>
+  <strong>Озёра Саха · Интерактивный школьный проект</strong>
+  <p>
+    Изучай природу, задавай вопросы и береги окружающий мир.
+    Учебный материал о Республике Саха (Якутия).
+  </p>
+</footer>
+
+<div class="modal" id="modal" role="dialog"
+     aria-modal="true" aria-label="Фотогалерея">
+  <div class="modal-inner">
+    <button id="close">✕ Закрыть</button>
+    <br>
+    <img id="largePhoto" src="" alt="">
+    <h3 id="caption"></h3>
+    <button id="prev">← Предыдущее</button>
+    <button id="nextPhoto">Следующее →</button>
+  </div>
+</div>
+
+<script>
+const questions = [
+  {
+    q:"В какой республике находится озеро Лабынкыр?",
+    a:["Карелия","Саха (Якутия)","Татарстан","Крым"],
+    c:1,e:"Лабынкыр находится в восточной части Якутии."
+  },
+  {
+    q:"Что такое многолетняя мерзлота?",
+    a:["Лёд на поверхности озера","Снег зимой","Грунт, который остаётся мёрзлым не менее двух лет подряд","Ледник в море"],
+    c:2,e:"Многолетняя мерзлота — грунт, сохраняющий отрицательную температуру не менее двух лет."
+  },
+  {
+    q:"Что может способствовать образованию озёр?",
+    a:["Накопление воды в углублениях рельефа","Ветер сам по себе","Облака на небе","Солнечный свет"],
+    c:0,e:"Вода может накапливаться в естественных понижениях поверхности."
+  },
+  {
+    q:"Чем особенно известно озеро Лабынкыр?",
+    a:["Тропическими рыбами","Коралловыми рифами","Тёплой морской водой","Удалённостью и легендами"],
+    c:3,e:"Лабынкыр известно удалённостью и рассказами о загадочном обитателе."
+  },
+  {
+    q:"Какую роль озёра играют для птиц?",
+    a:["Не имеют значения","Дают места для кормления и отдыха","Останавливают перелёты","Меняют перья на чешую"],
+    c:1,e:"Озёра служат местами отдыха, кормления, а иногда и гнездования."
+  },
+  {
+    q:"Что нужно сделать после пикника у озера?",
+    a:["Оставить мусор","Бросить упаковки в воду","Забрать мусор с собой","Спрятать мусор в траве"],
+    c:2,e:"Убирай за собой, чтобы не загрязнять воду и берега."
+  },
+  {
+    q:"Почему лёд на озере может быть опасным?",
+    a:["Его толщина и прочность неодинаковы","Он всегда горячий","Под ним нет воды","Он никогда не тает"],
+    c:0,e:"Погода, течения и другие условия влияют на прочность льда."
+  },
+  {
+    q:"Что изучает география озёр?",
+    a:["Только звёзды","Только языки","Только машины","Расположение и особенности водоёмов"],
+    c:3,e:"География изучает размещение водоёмов и их связи с природой."
+  },
+  {
+    q:"Как называется животный мир определённой территории?",
+    a:["Флора","Фауна","Климат","Рельеф"],
+    c:1,e:"Фауна — животный мир определённой территории."
+  },
+  {
+    q:"Как называется растительный мир территории?",
+    a:["Фауна","Горизонт","Флора","Меридиан"],
+    c:2,e:"Флора — совокупность видов растений на определённой территории."
+  },
+  {
+    q:"Какое море омывает северное побережье Якутии?",
+    a:["Море Лаптевых","Чёрное море","Балтийское море","Средиземное море"],
+    c:0,e:"Северное побережье Якутии выходит к морю Лаптевых."
+  },
+  {
+    q:"Почему учёные изучают озёра?",
+    a:["Озёра не меняются","Они заменяют все приборы","В них нет живых организмов","По ним можно изучать изменения природы"],
+    c:3,e:"Озёра помогают исследовать климат, экосистемы и изменения окружающей среды."
+  },
+  {
+    q:"Что означает якутское слово «күөл»?",
+    a:["Гора","Озеро","Снег","Лес"],
+    c:1,e:"«Күөл» по-якутски означает «озеро»."
+  },
+  {
+    q:"Как лучше наблюдать за дикими птицами?",
+    a:["Разорять гнёзда","Громко кричать","Смотреть спокойно и на расстоянии","Ловить птиц"],
+    c:2,e:"Наблюдение на расстоянии помогает не тревожить животных."
+  },
+  {
+    q:"Что такое природное озеро?",
+    a:["Естественный водоём в углублении суши","Бассейн в здании","Любая лужа на дороге","Подземный тоннель"],
+    c:0,e:"Озеро — естественный водоём, расположенный в углублении суши."
+  }
+];
+
+let current = 0;
+let score = 0;
+let answered = false;
+
+const $ = id => document.getElementById(id);
+
+function renderQuestion() {
+  answered = false;
+  const item = questions[current];
+  $("counter").textContent =
+    `Вопрос ${current+1} из ${questions.length} · Баллы: ${score}`;
+  $("bar").style.width = (current/questions.length*100)+"%";
+  $("question").textContent = item.q;
+  $("feedback").textContent = "";
+  $("next").disabled = true;
+  $("next").textContent =
+    current === questions.length-1
+      ? "Узнать результат →"
+      : "Следующий вопрос →";
+
+  $("answers").replaceChildren();
+
+  item.a.forEach((answer,index) => {
+    const button = document.createElement("button");
+    button.className = "answer";
+    button.textContent =
+      ["А. ","Б. ","В. ","Г. "][index] + answer;
+
+    button.addEventListener("click", () => choose(index,button));
+    $("answers").appendChild(button);
+  });
+}
+
+function choose(index,button) {
+  if (answered) return;
+  answered = true;
+
+  const item = questions[current];
+  const buttons = [...$("answers").children];
+
+  buttons.forEach((b,i) => {
+    b.disabled = true;
+    if (i === item.c) b.classList.add("correct");
+  });
+
+  if (index === item.c) {
+    score++;
+    $("feedback").textContent = "✅ Верно! " + item.e;
+  } else {
+    button.classList.add("wrong");
+    $("feedback").textContent = "❌ Не совсем. " + item.e;
+  }
+
+  $("counter").textContent =
+    `Вопрос ${current+1} из ${questions.length} · Баллы: ${score}`;
+  $("bar").style.width = ((current+1)/questions.length*100)+"%";
+  $("next").disabled = false;
+}
+
+$("next").addEventListener("click", () => {
+  if (!answered) return;
+
+  if (current < questions.length-1) {
+    current++;
+    renderQuestion();
+  } else {
+    showResult();
+  }
+});
+
+function showResult() {
+  $("gameArea").classList.add("hidden");
+  $("result").classList.remove("hidden");
+  $("resultScore").textContent = `${score} / ${questions.length}`;
+
+  if (score >= 13) {
+    $("resultTitle").textContent = "🏆 Великолепно!";
+    $("resultText").textContent =
+      "Ты настоящий исследователь природы Саха!";
+  } else if (score >= 9) {
+    $("resultTitle").textContent = "🌟 Отличный результат!";
+    $("resultText").textContent =
+      "Ты многое знаешь об озёрах Якутии. Продолжай изучать природу!";
+  } else if (score >= 5) {
+    $("resultTitle").textContent = "👍 Хорошее начало!";
+    $("resultText").textContent =
+      "Повтори интересные факты и попробуй ещё раз.";
+  } else {
+    $("resultTitle").textContent = "🌱 Продолжай исследовать!";
+    $("resultText").textContent =
+      "Изучи материал выше и сыграй снова. Каждая попытка помогает учиться!";
+  }
+}
+
+$("restart").addEventListener("click", () => {
+  current = 0;
+  score = 0;
+  $("gameArea").classList.remove("hidden");
+  $("result").classList.add("hidden");
+  renderQuestion();
+});
+
+renderQuestion();
+
+/* Фотогалерея */
+const photos = [...document.querySelectorAll(".photo")];
+let photoIndex = 0;
+const modal = $("modal");
+
+function openPhoto(index) {
+  photoIndex = (index + photos.length) % photos.length;
+  const img = photos[photoIndex].querySelector("img");
+  $("largePhoto").src = img.src;
+  $("largePhoto").alt = img.alt;
+  $("caption").textContent = photos[photoIndex].dataset.title;
+  modal.classList.add("open");
+}
+
+function closePhoto() {
+  modal.classList.remove("open");
+}
+
+photos.forEach((photo,index) => {
+  photo.addEventListener("click",() => openPhoto(index));
+});
+
+$("close").addEventListener("click",closePhoto);
+$("prev").addEventListener("click",() => openPhoto(photoIndex-1));
+$("nextPhoto").addEventListener("click",() => openPhoto(photoIndex+1));
+
+modal.addEventListener("click",event => {
+  if (event.target === modal) closePhoto();
+});
+
+document.addEventListener("keydown",event => {
+  if (!modal.classList.contains("open")) return;
+  if (event.key === "Escape") closePhoto();
+  if (event.key === "ArrowLeft") openPhoto(photoIndex-1);
+  if (event.key === "ArrowRight") openPhoto(photoIndex+1);
+});
+</script>
+</body>
+</html>
